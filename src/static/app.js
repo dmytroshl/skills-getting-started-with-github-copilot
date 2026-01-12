@@ -4,6 +4,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const signupForm = document.getElementById("signup-form");
   const messageDiv = document.getElementById("message");
 
+  // Helper to get initials from email (before @)
+  function getBadgeInitials(email) {
+    const namePart = (email || "").split("@")[0] || "";
+    const parts = namePart.split(/[\.\-_]/).filter(Boolean);
+    if (parts.length === 0) return (email[0] || "").toUpperCase();
+    if (parts.length === 1) return (parts[0][0] || "").toUpperCase();
+    return ((parts[0][0] || "") + (parts[1][0] || "")).toUpperCase();
+  }
+
   // Function to fetch activities from API
   async function fetchActivities() {
     try {
@@ -12,6 +21,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Clear loading message
       activitiesList.innerHTML = "";
+
+      // Clear select options (keep placeholder)
+      activitySelect.innerHTML = '<option value="">-- Select an activity --</option>';
 
       // Populate activities list
       Object.entries(activities).forEach(([name, details]) => {
@@ -27,6 +39,44 @@ document.addEventListener("DOMContentLoaded", () => {
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
         `;
 
+        // Participants section
+        const participants = details.participants || [];
+        const participantsSection = document.createElement("div");
+        participantsSection.className = "participants-section";
+
+        const heading = document.createElement("h5");
+        heading.textContent = "Participants";
+        participantsSection.appendChild(heading);
+
+        if (participants.length === 0) {
+          const noP = document.createElement("p");
+          noP.className = "info";
+          noP.textContent = "No participants yet";
+          participantsSection.appendChild(noP);
+        } else {
+          const ul = document.createElement("ul");
+          ul.className = "participants-list";
+
+          participants.forEach((email) => {
+            const li = document.createElement("li");
+
+            const badge = document.createElement("span");
+            badge.className = "participant-badge";
+            badge.textContent = getBadgeInitials(email);
+
+            const emailSpan = document.createElement("span");
+            emailSpan.className = "participant-email";
+            emailSpan.textContent = email;
+
+            li.appendChild(badge);
+            li.appendChild(emailSpan);
+            ul.appendChild(li);
+          });
+
+          participantsSection.appendChild(ul);
+        }
+
+        activityCard.appendChild(participantsSection);
         activitiesList.appendChild(activityCard);
 
         // Add option to select dropdown
