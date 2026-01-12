@@ -131,9 +131,23 @@ section h3 {
   white-space: nowrap;
 }
 
+.participant-remove {
+  background: transparent;
+  border: none;
+  color: #c62828;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.participant-remove:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
 .form-group {
   margin-bottom: 15px;
-}
+} 
 
 .form-group label {
   display: block;
